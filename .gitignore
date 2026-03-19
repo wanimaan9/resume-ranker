@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+backend/node_modules/
+resume-analyzer/node_modules/
+
+# Environment Variables (CRITICAL)
+.env
+backend/.env
+resume-analyzer/.env
+
+# Uploaded Files
+backend/uploads/
+uploads/
+
+# Documentation files we generated
+API_KEY_ISSUE_RESOLUTION.md
+AXIOS_AND_URLENCODED_DOCS.md
+MULTER_CORS_PDFPARSE_DOCS.md
+
+# OS generated files
+.DS_Store
+Thumbs.db

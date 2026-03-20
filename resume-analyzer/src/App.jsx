@@ -5,7 +5,7 @@ import './App.css'
 function App() {
   const [file,setfile]=useState(null)
   const [result,setresult]=useState(null)
-  const [jobDescription,setJobDescription]=useState("");
+  
   const handleFileChange = (ev) => {
     const file=ev.target.files[0];
     setfile(file);
@@ -18,12 +18,17 @@ function App() {
     }
     const formData=new FormData();
     formData.append('resume', file);
-    formData.append("jobDesc", jobDescription);
+    
     try{
       const res=await fetch('http://localhost:5000/upload',{
         method:'POST',
         body:formData
       })
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        alert(errorData?.error || "An error occurred on the server.");
+        return; 
+      }
       const data=await res.json();
       setresult(data);
 
@@ -38,13 +43,8 @@ function App() {
         <h1>Resume Analyzer</h1>
         <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange}/>
         <br /> <br />
-        <textarea
-         placeholder="Enter job description..."
-         value={jobDescription}
-         onChange={(e) => setJobDescription(e.target.value)}
-         rows={5}
-         cols={40}
-/>
+        
+
         <button onClick={handleUpload}>Upload Resume</button>
         {result && (
           <div>

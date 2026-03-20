@@ -28,75 +28,96 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-app.get("/test-ai", async (req, res) => {
+async function analyzeResume(resumeText) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY not set in .env' });
+      throw new Error('GEMINI_API_KEY not set in .env');
     }
 
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         contents: [
-          {
-            parts: [{ text: "Say hello in one line" }]
+          { role:'user',
+            parts: [{ text:`
+              Analyze this resume and return json:{
+                  "role": "job role",
+                  "skills": ["skill1", "skill2", "skill3"]
+            }
+          Resume:${resumeText}
+          `}]
           }
         ]
       }
     );
 
-    const text =
-      response.data.candidates[0].content.parts[0].text;
+    const text = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    res.send(text);
+    if (!text) {
+        console.log("No AI text returned");
+        return null;
+    }
+
+    return text;
 
   } catch (err) {
     console.error("FULL ERROR:", err.response?.data || err.message);
-    res.status(500).send("Gemini error");
+    return null;
   }
-});
+};
 app.post('/upload', upload.single('resume'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No resume file uploaded' });
     }
 
-    const jobDescriptionRaw = req.body.jobDesc || '';
-    if (typeof jobDescriptionRaw !== 'string' || !jobDescriptionRaw.trim()) {
-      return res.status(400).json({ error: 'Job description is required' });
-    }
 
     const resumePath = req.file.path;
     const databuffer = fs.readFileSync(resumePath);
     const data = await pdfParse(databuffer);
 
     const resumeText = (data.text || '').toLowerCase();
-    const jobDescription = jobDescriptionRaw.toLowerCase();
 
-    const keywords = jobDescription.split(/\s+/).filter(Boolean);
-    if (keywords.length === 0) {
-      return res.status(400).json({ error: 'Job description must contain keywords' });
+    const aiResult= await analyzeResume(resumeText);
+    if(!aiResult){
+      return res.status(500).json({error:"AI failed"});
+
     }
+    console.log("AI RESULT:", aiResult);
+
+    let parsed;
+    try{
+      const jsonmatch=aiResult.match(/\{[\s\S]*\}/);
+      parsed=JSON.parse(jsonmatch[0]);
+    }catch(err){
+      console.log("JSON parse error", aiResult);
+      return res.status(500).json({error:"Ai formar Error"});
+    }
+    const role=parsed.role;
+    const skills=parsed.skills.map(s=>s.toLowerCase());
+
     let matchcount = 0;
     let missing = [];
 
-    keywords.forEach((keyword) => {
-      if (resumeText.includes(keyword)) {
+    skills.forEach((skill) => {
+      if (resumeText.includes(skill)) {
         matchcount++;
       } else {
-        missing.push(keyword);
+        missing.push(skill);
       }
 
     })
 
-    const matchPercentage = ((matchcount / keywords.length) * 100).toFixed(2);
+    const matchPercentage = ((matchcount / skills.length) * 100).toFixed(2);
 
     console.log(`Match percentage: ${matchPercentage}%`);
     console.log(`Missing keywords: ${missing.join(', ')}`);
 
 
     res.send({
+      role,
+      extractedSkills: skills,
       matchPercentage,
       missingKeywords: missing
     })
@@ -104,7 +125,7 @@ app.post('/upload', upload.single('resume'), async (req, res) => {
   }
   catch (err) {
     console.log(err)
-    res.status(500).send("Error processing resume");
+    res.status(500).json({error:"Error processing resume"});
   }
 })
 app.listen(5000, () => {

@@ -1,16 +1,126 @@
-# React + Vite
+# 🚀 AI Resume Analyzer & Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered web application that analyzes resumes, identifies missing skills, provides improvement suggestions, and generates a professional, structured resume in PDF format.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
 
-## React Compiler
+- 📄 Upload resume (PDF)
+- 🤖 AI-based role & skill extraction
+- 📊 Match percentage calculation
+- ❌ Missing skills detection
+- 💡 AI-generated improvement suggestions
+- 🧠 Structured resume generation (JSON)
+- 🖨️ Professional resume PDF generation (HTML + Puppeteer)
+- 🎨 Clean and modern UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧠 How It Works
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. User uploads a resume (PDF)
+2. Backend extracts text using pdf-parse
+3. Gemini AI:
+   - Detects role & skills
+   - Suggests improvements
+   - Generates structured resume data
+4. Backend processes AI response and calculates match percentage
+5. Resume is formatted into a professional template
+6. User downloads the improved resume as a PDF
+
+---
+
+## 🛠️ Tech Stack
+
+Frontend:
+- React
+- CSS
+
+Backend:
+- Node.js
+- Express.js
+
+AI Integration:
+- Google Gemini API
+
+Libraries:
+- multer (file upload)
+- pdf-parse (resume parsing)
+- axios (API calls)
+- puppeteer (PDF generation)
+
+---
+
+## 📁 Project Structure
+
+backend/
+  routes/
+  services/
+  utils/
+  index.js
+
+frontend/
+  components/
+  App.jsx
+
+---
+
+## ⚙️ Setup Instructions
+
+1. Clone the repository
+
+git clone https://github.com/wanimaan9/resume-ranker.git
+cd resume-ranker
+
+---
+
+2. Backend Setup
+
+cd backend
+npm install
+
+Create a .env file:
+
+GEMINI_API_KEY=your_api_key_here
+
+Run server:
+
+node index.js
+
+---
+
+3. Frontend Setup
+
+cd frontend
+npm install
+npm run dev
+
+---
+
+## 🚀 Future Improvements
+
+- Multiple resume templates
+- Improved ATS scoring
+
+---
+
+## 💡 Key Learnings
+
+- AI integration with real-world applications
+- Resume parsing and text extraction
+- JSON parsing and error handling
+- Backend modular architecture
+- HTML to PDF conversion using Puppeteer
+
+---
+
+## 🧑‍💻 Author
+
+Wani Maan
+
+---
+
+## ⭐ If you like this project
+
+Give it a star on GitHub!

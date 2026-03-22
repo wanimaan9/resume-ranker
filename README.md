@@ -1,4 +1,4 @@
-# 🚀 AI Resume Analyzer & Generator
+# 🚀 AI Resume Analyzer
 
 An AI-powered web application that analyzes resumes, identifies missing skills, provides improvement suggestions, and generates a professional, structured resume in PDF format.
 
@@ -70,8 +70,8 @@ frontend/
 
 1. Clone the repository
 
-git clone https://github.com/wanimaan9/resume-ranker.git
-cd resume-ranker
+git clone https://github.com/wanimaan9/ AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
 
 ---
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://ai-resume-analyzer-4j57.onrender.com';
 
 export const uploadResume = async (file) => {
   const formData = new FormData();
